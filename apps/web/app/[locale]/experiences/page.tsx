@@ -8,7 +8,7 @@ const trips = [
   { slug: "fayoum-oasis-trip", titleAr: "واحة الفيوم", titleEn: "Fayoum Oasis", dateAr: "8 ديسمبر 2026", dateEn: "8 Dec 2026", price: 700, seats: 10, image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1000&q=85", categoryAr: "طبيعة ومغامرة", categoryEn: "Nature & Adventure" },
 ];
 
-export default function ExperiencesPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function ExperiencesPage({ params }: { params: Promise<{ locale: string }> }) {\n  const { locale } = await params;
   const isAr = locale === "ar";
   const Arrow = isAr ? ArrowLeft : ArrowRight;
   return <main className="min-h-screen bg-brand-ivory">
