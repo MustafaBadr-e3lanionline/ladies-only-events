@@ -102,7 +102,8 @@ const MARKETING_CHANNELS = [
   { name: "WhatsApp", pct: 4 },
 ];
 
-export default function AdminDashboardPage({ params: { locale } }: { params: { locale: string } }) {
+export default function AdminDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const isAr = locale === "ar";
   const [bookings, setBookings] = useState<BookingRow[]>(INITIAL_BOOKINGS);
   const [crmSearch, setCrmSearch] = useState("");
