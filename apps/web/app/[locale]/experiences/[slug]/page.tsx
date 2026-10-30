@@ -53,7 +53,9 @@ const TRIP_DATA = {
 };
 
 
-const EXPERIENCE_OVERRIDES: Record<string, Partial<typeof TRIP_DATA>> = {
+type ExperienceOverride = Partial<typeof TRIP_DATA> & { overviewEn?: string; overviewAr?: string; inclusionsEn?: string[]; inclusionsAr?: string[] };
+
+const EXPERIENCE_OVERRIDES: Record<string, ExperienceOverride> = {
   "dahab-getaway": {
     slug: "dahab-getaway",
     titleEn: "Dahab Getaway",
