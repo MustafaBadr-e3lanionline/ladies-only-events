@@ -19,6 +19,7 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
   const [seats, setSeats] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<"instapay_bank" | "vodafone_cash">("instapay_bank");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
 
   const [form, setForm] = useState({
     fullName: "",
@@ -36,32 +37,23 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
   const [bookingNumber, setBookingNumber] = useState("LOE-20241012-0015");
 
   const handleConfirmManualPayment = async () => {
-    setIsSubmitting(true);
-    try {
-      const generatedNumber = `LOE-20261030-${Math.floor(1000 + Math.random() * 9000)}`;
-      setBookingNumber(generatedNumber);
-
-      // استدعاء API إرسال التذكرة تلقائياً عبر WhatsApp Cloud API
-      await fetch("/api/notifications/whatsapp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "send_ticket",
-          phone: form.phone,
-          attendeeName: form.fullName,
-          bookingNumber: generatedNumber,
-          tripTitle: "رحلة العين السخنة - Ain Sokhna Day Trip",
-          tripDate: "Sat, 12 Oct • 06:00 AM",
-          meetingPoint: "القاهرة الجديدة (نقطة التجمع)",
-          seatsCount: seats,
-          totalPaid: total,
-        }),
-      });
-
-      setStep(4);
-    } finally {
-      setIsSubmitting(false);
+    setSubmissionError("");
+    if (!form.transferReference.trim() || !form.receiptFileName) {
+      setSubmissionError(
+        isAr
+          ? "أدخلي الرقم المرجعي وأرفقي إيصال التحويل قبل المتابعة."
+          : "Enter the transfer reference and select the transfer receipt before continuing."
+      );
+      return;
     }
+
+    // Booking persistence, private receipt upload, and payment review are not
+    // implemented yet. Never generate a fake booking number or issue a ticket.
+    setSubmissionError(
+      isAr
+        ? "الحجز الإلكتروني لم يُفعّل بعد. لم يتم تسجيل الحجز أو تأكيد الدفع. يرجى التواصل مع فريق Ladies Only Events لإتمام الحجز."
+        : "Online booking is not enabled yet. No booking was saved and no payment was confirmed. Please contact Ladies Only Events to complete your booking."
+    );
   };
 
   return (
@@ -343,10 +335,16 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
             <Lock className="w-4 h-4 text-brand-teal" />
             <span>
               {isAr
-                ? "سيتم إرسال التذكرة ورمز QR تلقائياً على الواتساب فور الإرسال"
-                : "Your QR ticket will be sent automatically via WhatsApp"}
+                ? "لن يتم تأكيد الحجز إلا بعد تسجيل الطلب ومراجعة الدفع فعليًا."
+                : "Your booking is only confirmed after the request is saved and payment is verified."}
             </span>
           </div>
+
+          {submissionError && (
+            <div role="alert" className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-900">
+              {submissionError}
+            </div>
+          )}
 
           <div className="flex gap-3">
             <button
@@ -365,8 +363,8 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
                   ? "جاري إصدار التذكرة وإرسال الواتساب..."
                   : "Sending Ticket..."
                 : isAr
-                ? `تأكيد الحجز وإصدار التذكرة (EGP ${total})`
-                : `Confirm & Issue Ticket (EGP ${total})`}
+                ? `إرسال طلب الحجز (EGP ${total})`
+                : `Submit Booking Request (EGP ${total})`}
             </button>
           </div>
         </div>
