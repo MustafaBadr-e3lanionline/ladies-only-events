@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "predev": "tailwindcss --config ./tailwind.config.ts --input ./app/globals.css --output ./app/tailwind.generated.css",
     "dev": "concurrently -k \"tailwindcss --config ./tailwind.config.ts --input ./app/globals.css --output ./app/tailwind.generated.css --watch\" \"next dev\"",
     "build": "tailwindcss --config ./tailwind.config.ts --input ./app/globals.css --output ./app/tailwind.generated.css --minify && next build",
     "start": "next start",
