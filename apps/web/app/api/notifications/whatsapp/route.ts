@@ -5,9 +5,21 @@ const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
 const INTERNAL_SECRET = process.env.WHATSAPP_INTERNAL_API_SECRET;
 
 function formatEgyptianPhone(input: string): string | null {
-  const digits = input.replace(/\\D/g, "");
-  if (/^01[0125]\\d{8}$/.test(digits)) return `2${digits}`;
-  if (/^201[0125]\\d{8}$/.test(digits)) return digits;
+  const digits = input.split("").filter((char) => char >= "0" && char <= "9").join("");
+  if (
+    digits.length === 11 &&
+    digits.startsWith("01") &&
+    ["0", "1", "2", "5"].includes(digits[2])
+  ) {
+    return `2${digits}`;
+  }
+  if (
+    digits.length === 12 &&
+    digits.startsWith("201") &&
+    ["0", "1", "2", "5"].includes(digits[3])
+  ) {
+    return digits;
+  }
   return null;
 }
 
