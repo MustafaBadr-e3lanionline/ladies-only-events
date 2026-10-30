@@ -93,7 +93,13 @@ export async function POST(request: Request) {
         headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
       }).catch(() => undefined);
       receiptPath = null;
-      return jsonError("The booking could not be created. Check availability and try again.", 409);
+      const isConflict = /not enough seats|not available|duplicate key|already exists/i.test(detail);
+      return jsonError(
+        isConflict
+          ? "This experience may be full or unavailable. Please refresh and try again."
+          : "The booking service is not ready. Please contact support before retrying.",
+        isConflict ? 409 : 503
+      );
     }
 
     const rows = await rpc.json();
