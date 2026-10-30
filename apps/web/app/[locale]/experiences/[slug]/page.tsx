@@ -25,8 +25,8 @@ const TRIP_DATA = {
   reviewsCount: 128,
   tagsEn: ["Day Trip", "Beach", "Relaxation"],
   tagsAr: ["رحلة يوم واحد", "شاطئ", "استجمام"],
-  dateEn: "Sat, 12 Oct 2024",
-  dateAr: "السبت، 12 أكتوبر 2024",
+  dateEn: "Sat, 14 Nov 2026",
+  dateAr: "السبت، 14 نوفمبر 2026",
   timeEn: "06:00 AM - 08:00 PM",
   timeAr: "06:00 صباحاً - 08:00 مساءً",
   meetingPointEn: "New Cairo (Meeting Point)",
@@ -52,13 +52,82 @@ const TRIP_DATA = {
   ],
 };
 
+
+const EXPERIENCE_OVERRIDES: Record<string, Partial<typeof TRIP_DATA>> = {
+  "dahab-getaway": {
+    slug: "dahab-getaway",
+    titleEn: "Dahab Getaway",
+    titleAr: "مغامرة دهب",
+    price: 1450,
+    rating: 4.8,
+    reviewsCount: 84,
+    tagsEn: ["Multi-day Trip", "Adventure", "Red Sea"],
+    tagsAr: ["رحلة متعددة الأيام", "مغامرة", "البحر الأحمر"],
+    dateEn: "Wed, 25 Nov 2026",
+    dateAr: "الأربعاء، 25 نوفمبر 2026",
+    timeEn: "06:00 AM - Next day",
+    timeAr: "06:00 صباحًا - اليوم التالي",
+    meetingPointEn: "Cairo (Meeting Point)",
+    meetingPointAr: "القاهرة (نقطة التجمع)",
+    includesSummaryEn: "Transportation, Accommodation, Guided Activities",
+    includesSummaryAr: "الانتقالات، الإقامة، أنشطة بإشراف",
+    availableSeats: 8,
+    totalSeats: 30,
+  },
+  "alexandria-tour": {
+    slug: "alexandria-tour",
+    titleEn: "Alexandria Cultural Tour",
+    titleAr: "يوم في الإسكندرية",
+    price: 600,
+    rating: 4.8,
+    reviewsCount: 62,
+    tagsEn: ["Cultural Tour", "Sea Views", "Day Trip"],
+    tagsAr: ["جولة ثقافية", "إطلالات بحرية", "رحلة يوم واحد"],
+    dateEn: "Wed, 2 Dec 2026",
+    dateAr: "الأربعاء، 2 ديسمبر 2026",
+    timeEn: "07:00 AM - 09:00 PM",
+    timeAr: "07:00 صباحًا - 09:00 مساءً",
+    meetingPointEn: "Cairo (Meeting Point)",
+    meetingPointAr: "القاهرة (نقطة التجمع)",
+    includesSummaryEn: "Round-trip Transportation, Guided City Tour",
+    includesSummaryAr: "انتقالات ذهاب وعودة، جولة بإرشاد",
+    availableSeats: 15,
+    totalSeats: 35,
+  },
+  "fayoum-oasis-trip": {
+    slug: "fayoum-oasis-trip",
+    titleEn: "Fayoum Oasis Escape",
+    titleAr: "واحة الفيوم",
+    price: 700,
+    rating: 4.9,
+    reviewsCount: 73,
+    tagsEn: ["Nature", "Adventure", "Desert"],
+    tagsAr: ["طبيعة", "مغامرة", "صحراء"],
+    dateEn: "Tue, 8 Dec 2026",
+    dateAr: "الثلاثاء، 8 ديسمبر 2026",
+    timeEn: "07:00 AM - 08:00 PM",
+    timeAr: "07:00 صباحًا - 08:00 مساءً",
+    meetingPointEn: "Cairo (Meeting Point)",
+    meetingPointAr: "القاهرة (نقطة التجمع)",
+    includesSummaryEn: "Transportation, Local Guide, Selected Activities",
+    includesSummaryAr: "الانتقالات، مرشد محلي، أنشطة مختارة",
+    availableSeats: 10,
+    totalSeats: 25,
+  },
+};
+
+function getTripData(slug: string) {
+  return { ...TRIP_DATA, ...(EXPERIENCE_OVERRIDES[slug] ?? {}) };
+}
+
 export default function ExperienceDetailsPage({
   params: { locale, slug },
 }: {
   params: { locale: string; slug: string };
 }) {
   const isAr = locale === "ar";
-  const [activeImage, setActiveImage] = useState(TRIP_DATA.gallery[0]);
+  const tripData = getTripData(slug);
+  const [activeImage, setActiveImage] = useState(tripData.gallery[0]);
   const [seats, setSeats] = useState(1);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "included" | "photos" | "reviews" | "faq">("overview");
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
@@ -76,7 +145,7 @@ export default function ExperienceDetailsPage({
         </Link>
         <span>›</span>
         <span className="text-brand-burgundy font-bold">
-          {isAr ? TRIP_DATA.titleAr : TRIP_DATA.titleEn}
+          {isAr ? tripData.titleAr : tripData.titleEn}
         </span>
       </div>
 
@@ -87,24 +156,24 @@ export default function ExperienceDetailsPage({
           {/* Header Titles */}
           <div>
             <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900">
-              {TRIP_DATA.titleEn}
+              {tripData.titleEn}
             </h1>
             <p className="text-lg sm:text-xl font-bold text-brand-burgundy mt-1">
-              {TRIP_DATA.titleAr}
+              {tripData.titleAr}
             </p>
 
             {/* Rating & Tags */}
             <div className="flex flex-wrap items-center gap-3 mt-3">
               <div className="flex items-center gap-1 text-amber-500 text-sm font-bold">
                 <Star className="w-4 h-4 fill-current" />
-                <span>{TRIP_DATA.rating}</span>
+                <span>{tripData.rating}</span>
                 <span className="text-gray-400 font-normal text-xs">
-                  ({TRIP_DATA.reviewsCount} {isAr ? "تقييم" : "reviews"})
+                  ({tripData.reviewsCount} {isAr ? "تقييم" : "reviews"})
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
-                {(isAr ? TRIP_DATA.tagsAr : TRIP_DATA.tagsEn).map((tag) => (
+                {(isAr ? tripData.tagsAr : tripData.tagsEn).map((tag) => (
                   <span
                     key={tag}
                     className="px-3 py-1 rounded-full bg-brand-softPink text-brand-burgundy text-xs font-bold"
@@ -121,12 +190,12 @@ export default function ExperienceDetailsPage({
             <div className="relative h-[360px] sm:h-[440px] rounded-3xl overflow-hidden shadow-card">
               <img
                 src={activeImage}
-                alt={TRIP_DATA.titleEn}
+                alt={tripData.titleEn}
                 className="w-full h-full object-cover transition duration-500"
               />
               {/* Thumbnails Overlay inside Image (as per UI mockup) */}
               <div className="absolute bottom-4 inset-x-4 flex items-center gap-2.5 overflow-x-auto bg-black/35 backdrop-blur-md p-2.5 rounded-2xl">
-                {TRIP_DATA.gallery.map((img, idx) => (
+                {tripData.gallery.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImage(img)}
@@ -182,7 +251,7 @@ export default function ExperienceDetailsPage({
 
             {activeTab === "itinerary" && (
               <div className="space-y-4">
-                {TRIP_DATA.itinerary.map((item, idx) => (
+                {tripData.itinerary.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-4 p-3 rounded-2xl bg-brand-softPink/40">
                     <span className="px-3 py-1 rounded-lg bg-brand-burgundy text-white text-xs font-bold shrink-0">
                       {item.time}
@@ -217,7 +286,7 @@ export default function ExperienceDetailsPage({
           <div className="sticky top-28 bg-white rounded-3xl p-6 shadow-card border border-brand-peach/40 space-y-6">
             <div>
               <div className="text-3xl font-extrabold text-brand-burgundy">
-                EGP {TRIP_DATA.price}
+                EGP {tripData.price}
               </div>
               <span className="text-xs text-gray-400 font-medium">
                 {isAr ? "للفرد الواحد" : "Per Person"}
@@ -227,26 +296,26 @@ export default function ExperienceDetailsPage({
             <div className="space-y-3.5 text-sm text-gray-700 border-t border-b border-gray-100 py-4">
               <div className="flex items-center gap-3">
                 <Calendar className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.dateAr : TRIP_DATA.dateEn}</span>
+                <span>{isAr ? tripData.dateAr : tripData.dateEn}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.timeAr : TRIP_DATA.timeEn}</span>
+                <span>{isAr ? tripData.timeAr : tripData.timeEn}</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.meetingPointAr : TRIP_DATA.meetingPointEn}</span>
+                <span>{isAr ? tripData.meetingPointAr : tripData.meetingPointEn}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Bus className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.includesSummaryAr : TRIP_DATA.includesSummaryEn}</span>
+                <span>{isAr ? tripData.includesSummaryAr : tripData.includesSummaryEn}</span>
               </div>
               <div className="flex items-center gap-3 font-bold text-brand-burgundy">
                 <Users className="w-4 h-4 text-brand-rose shrink-0" />
                 <span>
                   {isAr
-                    ? `المقاعد المتاحة: ${TRIP_DATA.availableSeats} / ${TRIP_DATA.totalSeats}`
-                    : `Available Seats: ${TRIP_DATA.availableSeats} / ${TRIP_DATA.totalSeats}`}
+                    ? `المقاعد المتاحة: ${tripData.availableSeats} / ${tripData.totalSeats}`
+                    : `Available Seats: ${tripData.availableSeats} / ${tripData.totalSeats}`}
                 </span>
               </div>
             </div>
@@ -264,7 +333,7 @@ export default function ExperienceDetailsPage({
                 <span className="font-bold text-lg">{seats}</span>
                 <button
                   type="button"
-                  onClick={() => setSeats(Math.min(TRIP_DATA.availableSeats, seats + 1))}
+                  onClick={() => setSeats(Math.min(tripData.availableSeats, seats + 1))}
                   className="w-8 h-8 rounded-lg bg-brand-softPink text-brand-burgundy font-bold text-lg"
                 >
                   +
@@ -277,7 +346,7 @@ export default function ExperienceDetailsPage({
             </div>
 
             <Link
-              href={`/${locale}/checkout?trip=${TRIP_DATA.slug}&seats=${seats}`}
+              href={`/${locale}/checkout?trip=${tripData.slug}&seats=${seats}`}
               className="w-full bg-brand-burgundy hover:bg-brand-burgundyDark text-white font-bold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition"
             >
               <span>{isAr ? "احجزي الآن" : "Book Now"}</span>
