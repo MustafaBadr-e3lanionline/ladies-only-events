@@ -2,23 +2,22 @@ name: Validate Ladies Only Events build
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/web
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-      
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-        working-directory: ./apps/web
-
       - name: Build project
         run: npm run build
-        working-directory: ./apps/web
