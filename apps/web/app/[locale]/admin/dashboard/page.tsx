@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   Wallet,
   CalendarCheck2,
@@ -102,7 +102,8 @@ const MARKETING_CHANNELS = [
   { name: "WhatsApp", pct: 4 },
 ];
 
-export default function AdminDashboardPage({ params: { locale } }: { params: { locale: string } }) {
+export default function AdminDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const isAr = locale === "ar";
   const [bookings, setBookings] = useState<BookingRow[]>(INITIAL_BOOKINGS);
   const [crmSearch, setCrmSearch] = useState("");
@@ -113,7 +114,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const handleApproveBooking = async (booking: BookingRow) => {
     setIsApproving(true);
     try {
-      await fetch("/api/admin/bookings/verify", {
+      const response = await fetch("/api/admin/bookings/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -126,6 +127,11 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
           action: "approve",
         }),
       });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        window.alert(result.error || (isAr ? "تعذر اعتماد الدفع. لم يتم تغيير الحجز." : "Payment approval failed. The booking was not changed."));
+        return;
+      }
 
       setBookings((prev) =>
         prev.map((b) => (b.id === booking.id ? { ...b, status: "Confirmed" } : b))
@@ -157,7 +163,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
         <div className="flex items-center gap-3">
           <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold text-gray-700 shadow-sm">
-            Oct 1, 2024 - Oct 31, 2024 ▾
+            Demo data · Sample period ▾
           </div>
           <button className="p-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-brand-burgundy">
             <SlidersHorizontal className="w-4 h-4" />
@@ -168,7 +174,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
         </div>
       </div>
 
-      {/* Main Grid: Left 8 Cols (KPIs + Charts + Bookings) & Right 4 Cols (Marketing + CRM) */}
+      <div role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-900">{isAr ? "لوحة تجريبية: الأرقام والعميلات المعروضة بيانات نموذجية وليست سجلات فعلية. اعتماد الدفع معطل حتى ربط صلاحيات الإدارة وقاعدة البيانات." : "Demo dashboard: displayed figures and customers are sample data, not live records. Payment approval is disabled until admin authorization and database reconciliation are connected."}</div>\n\n      {/* Main Grid: Left 8 Cols (KPIs + Charts + Bookings) & Right 4 Cols (Marketing + CRM) */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* القسم الأيسر (8 أعمدة) */}
         <div className="xl:col-span-8 space-y-6">

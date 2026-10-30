@@ -13,8 +13,15 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
+export default function BookingWizard({ locale = "ar", tripSlug = "ain-sokhna-day-trip" }: { locale?: string; tripSlug?: string }) {
   const isAr = locale === "ar";
+  const trips: Record<string, { titleAr: string; titleEn: string; dateAr: string; dateEn: string; timeEn: string; price: number; image: string }> = {
+    "ain-sokhna-day-trip": { titleAr: "رحلة العين السخنة", titleEn: "Ain Sokhna Day Trip", dateAr: "14 نوفمبر 2026", dateEn: "14 Nov 2026", timeEn: "06:00 AM", price: 750, image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=300&q=80" },
+    "dahab-getaway": { titleAr: "مغامرة دهب", titleEn: "Dahab Getaway", dateAr: "25 نوفمبر 2026", dateEn: "25 Nov 2026", timeEn: "05:00 AM", price: 1450, image: "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=300&q=80" },
+    "alexandria-tour": { titleAr: "يوم في الإسكندرية", titleEn: "Alexandria Day Tour", dateAr: "2 ديسمبر 2026", dateEn: "2 Dec 2026", timeEn: "06:30 AM", price: 600, image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=300&q=80" },
+    "fayoum-oasis-trip": { titleAr: "واحة الفيوم", titleEn: "Fayoum Oasis", dateAr: "8 ديسمبر 2026", dateEn: "8 Dec 2026", timeEn: "07:00 AM", price: 700, image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80" },
+  };
+  const trip = trips[tripSlug] || trips["ain-sokhna-day-trip"];
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [seats, setSeats] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<"instapay_bank" | "vodafone_cash">("instapay_bank");
@@ -26,39 +33,47 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
     email: "",
     notes: "",
     transferReference: "",
-    receiptFileName: "",
+    receiptFile: null as File | null,
   });
 
-  const pricePerPerson = 750;
+  const pricePerPerson = trip.price;
   const serviceFee = 15;
   const subtotal = seats * pricePerPerson;
   const total = subtotal + serviceFee;
-  const [bookingNumber, setBookingNumber] = useState("LOE-20241012-0015");
+  const [bookingNumber, setBookingNumber] = useState("");
+  const [confirmedTotal, setConfirmedTotal] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleConfirmManualPayment = async () => {
     setIsSubmitting(true);
+    setErrorMessage("");
     try {
-      const generatedNumber = `LOE-20261030-${Math.floor(1000 + Math.random() * 9000)}`;
-      setBookingNumber(generatedNumber);
+      if (!form.receiptFile) {
+        setErrorMessage(isAr ? "ارفعي صورة إيصال التحويل أولاً." : "Please upload your transfer receipt first.");
+        return;
+      }
+      const payload = new FormData();
+      payload.set("fullName", form.fullName.trim());
+      payload.set("phone", form.phone.trim());
+      payload.set("email", form.email.trim());
+      payload.set("notes", form.notes.trim());
+      payload.set("transferReference", form.transferReference.trim());
+      payload.set("receipt", form.receiptFile);
+      payload.set("tripSlug", tripSlug);
+      payload.set("seats", String(seats));
+      payload.set("paymentMethod", paymentMethod);
 
-      // استدعاء API إرسال التذكرة تلقائياً عبر WhatsApp Cloud API
-      await fetch("/api/notifications/whatsapp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "send_ticket",
-          phone: form.phone,
-          attendeeName: form.fullName,
-          bookingNumber: generatedNumber,
-          tripTitle: "رحلة العين السخنة - Ain Sokhna Day Trip",
-          tripDate: "Sat, 12 Oct • 06:00 AM",
-          meetingPoint: "القاهرة الجديدة (نقطة التجمع)",
-          seatsCount: seats,
-          totalPaid: total,
-        }),
-      });
-
+      const response = await fetch("/api/bookings", { method: "POST", body: payload });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setErrorMessage(result.error || (isAr ? "تعذر إرسال طلب الحجز. حاولي مرة أخرى." : "Could not submit the booking. Please try again."));
+        return;
+      }
+      setBookingNumber(result.bookingNumber);
+      setConfirmedTotal(Number(result.total));
       setStep(4);
+    } catch {
+      setErrorMessage(isAr ? "تعذر الاتصال بالخدمة. لم يتم تأكيد الحجز؛ حاولي لاحقًا." : "The service could not be reached. Your booking is not confirmed; please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -87,18 +102,20 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
         ))}
       </div>
 
+      {errorMessage && <div role="alert" className="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm leading-6 text-rose-700">{errorMessage}</div>}
+
       {/* الخطوة 1: بيانات المشتركة */}
       {step === 1 && (
         <div className="space-y-5">
           <div className="flex items-center gap-4 bg-brand-softPink/60 p-3.5 rounded-2xl">
             <img
-              src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=300&q=80"
+              src={trip.image}
               alt="Ain Sokhna"
               className="w-20 h-20 rounded-xl object-cover"
             />
             <div>
-              <h3 className="font-bold text-gray-900">Ain Sokhna Day Trip</h3>
-              <p className="text-xs text-gray-500 mt-0.5">Sat, 12 Oct 2024 • 06:00 AM</p>
+              <h3 className="font-bold text-gray-900">{isAr ? trip.titleAr : trip.titleEn}</h3>
+              <p className="text-xs text-gray-500 mt-0.5">{isAr ? trip.dateAr : trip.dateEn} • {trip.timeEn}</p>
               <p className="text-sm font-extrabold text-brand-burgundy mt-1">EGP {pricePerPerson}</p>
             </div>
           </div>
@@ -305,18 +322,18 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
               <label className="flex items-center justify-center gap-2 w-full p-3 rounded-xl border-2 border-dashed border-brand-rose/50 bg-white cursor-pointer hover:bg-brand-softPink/30 transition text-xs font-bold text-brand-burgundy">
                 <Upload className="w-4 h-4" />
                 <span>
-                  {form.receiptFileName
-                    ? form.receiptFileName
+                  {form.receiptFile
+                    ? form.receiptFile.name
                     : isAr
                     ? "ارفعي لقطة شاشة لإيصال التحويل (Screenshot) *"
                     : "Upload Transfer Receipt Screenshot *"}
                 </span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                   onChange={(e) =>
-                    setForm({ ...form, receiptFileName: e.target.files?.[0]?.name || "" })
+                    setForm({ ...form, receiptFile: e.target.files?.[0] || null })
                   }
                 />
               </label>
@@ -343,8 +360,8 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
             <Lock className="w-4 h-4 text-brand-teal" />
             <span>
               {isAr
-                ? "سيتم إرسال التذكرة ورمز QR تلقائياً على الواتساب فور الإرسال"
-                : "Your QR ticket will be sent automatically via WhatsApp"}
+                ? "سيظل الحجز قيد المراجعة حتى يتأكد الفريق من التحويل. لن تصدر التذكرة قبل اعتماد الدفع."
+                : "Your booking stays pending until the team verifies the transfer. No ticket is issued before payment approval."}
             </span>
           </div>
 
@@ -357,16 +374,16 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
             </button>
             <button
               onClick={handleConfirmManualPayment}
-              disabled={!form.transferReference || isSubmitting}
+              disabled={!form.transferReference || !form.receiptFile || isSubmitting}
               className="w-2/3 bg-brand-burgundy hover:bg-brand-burgundyDark disabled:opacity-50 text-white font-bold py-3.5 rounded-xl"
             >
               {isSubmitting
                 ? isAr
-                  ? "جاري إصدار التذكرة وإرسال الواتساب..."
-                  : "Sending Ticket..."
+                  ? "جاري إرسال طلب الحجز..."
+                  : "Submitting booking..."
                 : isAr
-                ? `تأكيد الحجز وإصدار التذكرة (EGP ${total})`
-                : `Confirm & Issue Ticket (EGP ${total})`}
+                ? `إرسال الحجز للمراجعة (EGP ${total})`
+                : `Submit for review (EGP ${total})`}
             </button>
           </div>
         </div>
@@ -379,14 +396,14 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
             <CheckCircle2 className="w-10 h-10" />
           </div>
           <div>
-            <h3 className="text-2xl font-serif font-bold text-gray-900">Booking Confirmed!</h3>
-            <p className="text-lg font-bold text-emerald-700 mt-1">تم استلام الحجز وإرسال التذكرة!</p>
+            <h3 className="text-2xl font-serif font-bold text-gray-900">{isAr ? "تم استلام طلب الحجز" : "Booking request received"}</h3>
+            <p className="text-lg font-bold text-amber-700 mt-1">{isAr ? "الحجز قيد مراجعة الدفع" : "Payment verification pending"}</p>
             <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
               <MessageCircle className="w-4 h-4 text-emerald-600" />
               <span>
                 {isAr
-                  ? `تم إرسال التذكرة ورمز QR تلقائياً إلى واتساب رقم ${form.phone}`
-                  : `Ticket & QR Code sent automatically to WhatsApp ${form.phone}`}
+                  ? `سيتم تأكيد الحجز بعد مراجعة التحويل. رقم التواصل: ${form.phone}`
+                  : `Your booking will be confirmed after the transfer is reviewed. Contact: ${form.phone}`}
               </span>
             </p>
           </div>
@@ -395,6 +412,7 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
             <div className="text-start">
               <span className="text-xs text-gray-500 block">{isAr ? "رقم الحجز" : "Booking Number"}</span>
               <span className="font-mono font-extrabold text-brand-burgundy text-base">{bookingNumber}</span>
+              <span className="mt-1 block text-xs font-bold text-gray-600">{isAr ? `الإجمالي المسجل: ${confirmedTotal ?? total} جنيه` : `Recorded total: EGP ${confirmedTotal ?? total}`}</span>
             </div>
             <button
               onClick={() => navigator.clipboard.writeText(bookingNumber)}
@@ -404,21 +422,10 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-2">
-            <a
-              href={`/${locale}/account`}
-              className="border border-brand-burgundy text-brand-burgundy font-bold py-3 rounded-xl text-sm"
-            >
-              {isAr ? "عرض حجوزاتي والتذكرة" : "View My Bookings"}
-            </a>
-            <a
-              href={`/${locale}/account?ticket=${bookingNumber}`}
-              className="bg-brand-burgundy text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              <span>{isAr ? "تحميل التذكرة" : "Download Ticket"}</span>
-            </a>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-start text-sm leading-6 text-amber-900">
+            {isAr ? "احتفظي برقم الحجز. هذه ليست تذكرة دخول، ولن يصدر QR إلا بعد مراجعة واعتماد الدفع من فريق Ladies Only Events." : "Keep your booking reference. This is not an entry ticket; a QR ticket is issued only after the Ladies Only Events team verifies payment."}
           </div>
+          <a href={`/${locale}/experiences`} className="block rounded-xl bg-brand-burgundy py-3 text-sm font-bold text-white">{isAr ? "العودة إلى الرحلات" : "Back to experiences"}</a>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   Calendar,
   CreditCard,
@@ -64,13 +64,14 @@ const MY_BOOKINGS = [
   },
 ];
 
-export default function CustomerAccountPage({ params: { locale } }: { params: { locale: string } }) {
+export default function CustomerAccountPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const isAr = locale === "ar";
   const ChevronIcon = isAr ? ChevronLeft : ChevronRight;
 
   // حالة تسجيل الدخول عبر رقم الموبايل + OTP
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [phoneInput, setPhoneInput] = useState("01012345678");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [phoneInput, setPhoneInput] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState("");
 
@@ -106,11 +107,15 @@ export default function CustomerAccountPage({ params: { locale } }: { params: { 
                 className="w-full px-4 py-3.5 rounded-xl border border-gray-200 text-center font-mono text-base focus:outline-none focus:border-brand-burgundy"
               />
               <button
-                onClick={() => setOtpSent(true)}
-                className="w-full bg-brand-burgundy text-white font-bold py-3.5 rounded-xl"
+                type="button"
+                disabled
+                className="w-full cursor-not-allowed rounded-xl bg-gray-300 py-3.5 font-bold text-gray-600"
               >
-                {isAr ? "إرسال كود التحقق (OTP)" : "Send OTP Code"}
+                {isAr ? "تسجيل الدخول الآمن قيد الإعداد" : "Secure sign-in is being configured"}
               </button>
+              <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-900">
+                {isAr ? "تم تعطيل الدخول مؤقتًا لأن التحقق الحقيقي من OTP غير مفعّل بعد. لن نعرض حجوزات تجريبية على أنها بياناتك." : "Sign-in is temporarily disabled because real OTP verification is not configured. Demo bookings will not be shown as your personal records."}
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -123,10 +128,11 @@ export default function CustomerAccountPage({ params: { locale } }: { params: { 
                 className="w-full px-4 py-3.5 rounded-xl border border-brand-burgundy text-center font-mono text-xl tracking-widest"
               />
               <button
-                onClick={() => setIsAuthenticated(true)}
-                className="w-full bg-brand-burgundy text-white font-bold py-3.5 rounded-xl"
+                type="button"
+                disabled
+                className="w-full cursor-not-allowed rounded-xl bg-gray-300 py-3.5 font-bold text-gray-600"
               >
-                {isAr ? "تأكيد الدخول وعرض التذاكر" : "Verify & Login"}
+                {isAr ? "التحقق غير متاح حاليًا" : "Verification is currently unavailable"}
               </button>
             </div>
           )}
