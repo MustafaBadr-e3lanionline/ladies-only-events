@@ -3,7 +3,8 @@
 import React, { use, useState } from "react";
 import { QrCode, CheckCircle2, XCircle, UserCheck, RefreshCw } from "lucide-react";
 
-export default function TicketScannerPage({ params: { locale } }: { params: { locale: string } }) {
+export default function TicketScannerPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const isAr = locale === "ar";
   const [scanResult, setScanResult] = useState<{
     success: boolean;
