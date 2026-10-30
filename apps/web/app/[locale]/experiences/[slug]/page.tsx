@@ -73,6 +73,15 @@ const EXPERIENCE_OVERRIDES: Record<string, Partial<typeof TRIP_DATA>> = {
     includesSummaryAr: "الانتقالات، الإقامة، أنشطة بإشراف",
     availableSeats: 8,
     totalSeats: 30,
+    overviewEn: "Explore Dahab’s relaxed coastal atmosphere and clear water with a women-only community.",
+    overviewAr: "اكتشفي أجواء دهب الساحرة ومياهها الصافية ضمن مجتمع نسائي مميز.",
+    itinerary: [
+      { time: "06:00 AM", ar: "التجمع والتحرك من القاهرة", en: "Gathering and departure from Cairo" },
+      { time: "Afternoon", ar: "الوصول إلى دهب واستكشاف المنطقة الساحلية", en: "Arrival in Dahab and coastal exploration" },
+      { time: "Next day", ar: "أنشطة جماعية ووقت حر ثم العودة", en: "Group activities, free time and return journey" },
+    ],
+    inclusionsAr: ["انتقالات ذهاب وعودة", "الإقامة حسب البرنامج", "أنشطة جماعية بإشراف"],
+    inclusionsEn: ["Round-trip transportation", "Accommodation as listed", "Guided group activities"],
   },
   "alexandria-tour": {
     slug: "alexandria-tour",
@@ -93,6 +102,15 @@ const EXPERIENCE_OVERRIDES: Record<string, Partial<typeof TRIP_DATA>> = {
     includesSummaryAr: "انتقالات ذهاب وعودة، جولة بإرشاد",
     availableSeats: 15,
     totalSeats: 35,
+    overviewEn: "Discover Alexandria’s waterfront and cultural highlights on a relaxed guided day trip.",
+    overviewAr: "استمتعي بجولة تجمع بين أجواء البحر وأبرز المعالم الثقافية في الإسكندرية.",
+    itinerary: [
+      { time: "07:00 AM", ar: "التجمع والتحرك من القاهرة", en: "Gathering and departure from Cairo" },
+      { time: "Morning", ar: "جولة على الواجهة البحرية وأبرز المعالم", en: "Waterfront walk and key landmarks" },
+      { time: "Evening", ar: "وقت حر ثم العودة إلى القاهرة", en: "Free time followed by return to Cairo" },
+    ],
+    inclusionsAr: ["انتقالات ذهاب وعودة", "جولة ثقافية بإرشاد", "توقفات مختارة للتصوير"],
+    inclusionsEn: ["Round-trip transportation", "Guided cultural tour", "Selected photo stops"],
   },
   "fayoum-oasis-trip": {
     slug: "fayoum-oasis-trip",
@@ -113,11 +131,28 @@ const EXPERIENCE_OVERRIDES: Record<string, Partial<typeof TRIP_DATA>> = {
     includesSummaryAr: "الانتقالات، مرشد محلي، أنشطة مختارة",
     availableSeats: 10,
     totalSeats: 25,
+    overviewEn: "Discover Fayoum’s desert landscapes and oasis scenery with selected outdoor activities.",
+    overviewAr: "اكتشفي طبيعة الفيوم والمناظر الصحراوية وأجواء الواحات مع أنشطة خارجية مختارة.",
+    itinerary: [
+      { time: "07:00 AM", ar: "التجمع والتحرك من القاهرة", en: "Gathering and departure from Cairo" },
+      { time: "Morning", ar: "استكشاف الطبيعة والمناظر الصحراوية", en: "Exploring natural and desert scenery" },
+      { time: "Afternoon", ar: "أنشطة مختارة ثم العودة إلى القاهرة", en: "Selected activities followed by return to Cairo" },
+    ],
+    inclusionsAr: ["انتقالات ذهاب وعودة", "مرشد محلي حسب البرنامج", "أنشطة مختارة"],
+    inclusionsEn: ["Round-trip transportation", "Local guide as listed", "Selected activities"],
   },
 };
 
 function getTripData(slug: string) {
-  return { ...TRIP_DATA, ...(EXPERIENCE_OVERRIDES[slug] ?? {}) };
+  const selected = EXPERIENCE_OVERRIDES[slug] ?? {};
+  return {
+    ...TRIP_DATA,
+    ...selected,
+    overviewEn: selected.overviewEn ?? "Enjoy a relaxed day trip with a women-only community and a carefully planned group experience.",
+    overviewAr: selected.overviewAr ?? "استمتعي برحلة يومية مريحة ضمن مجتمع نسائي مميز وبرنامج جماعي منظم.",
+    inclusionsEn: selected.inclusionsEn ?? ["Round-trip transportation", "Beach and pool access", "Lunch at the resort", "Group activities", "Trip team supervision"],
+    inclusionsAr: selected.inclusionsAr ?? ["انتقالات ذهاب وعودة", "دخول الشاطئ وحمام السباحة", "وجبة غداء في المنتجع", "أنشطة جماعية", "إشراف فريق الرحلة"],
+  };
 }
 
 export default function ExperienceDetailsPage({
@@ -242,9 +277,7 @@ export default function ExperienceDetailsPage({
                   {isAr ? "تفاصيل التجربة مع داليا ورانيا" : "Experience Overview"}
                 </h3>
                 <p>
-                  {isAr
-                    ? "استمتعي بيوم كامل من الخصوصية والبهجة على أجمل شواطئ العين السخنة برفقة مجتمع نسائي راقٍ. الرحلة مصممة لتفصلي عن ضغوط الأسبوع، وتكوني صداقات جديدة في أجواء آمنة ومبهجة تحت إشراف داليا ورانيا."
-                    : "Enjoy a full day of privacy, relaxation, and fun on the finest beaches of Ain Sokhna with an amazing community of women."}
+                  {isAr ? tripData.overviewAr : tripData.overviewEn}
                 </p>
               </div>
             )}
@@ -264,13 +297,7 @@ export default function ExperienceDetailsPage({
 
             {activeTab === "included" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  isAr ? "الانتقالات بباصات حديثة مكيفة ذهاب وعودة" : "Round-trip A/C Bus Transportation",
-                  isAr ? "دخول الشاطئ وحمام السباحة الخاص" : "Beach & Pool Access",
-                  isAr ? "وجبة غداء متكاملة في المنتجع" : "Full Lunch Meal at the Resort",
-                  isAr ? "تصوير فوتوغرافي احترافي طوال اليوم" : "Professional Photography All Day",
-                  isAr ? "إشراف كامل من فريق داليا ورانيا" : "Full Supervision by Dalia & Rania",
-                ].map((inc, i) => (
+                {(isAr ? tripData.inclusionsAr : tripData.inclusionsEn).map((inc, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-sm font-medium text-gray-800">
                     <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>{inc}</span>
