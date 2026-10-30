@@ -49,7 +49,7 @@ const UPCOMING_TRIPS = [
   },
 ];
 
-export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {\n  const { locale } = await params;
   const isAr = locale === "ar";
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
 
