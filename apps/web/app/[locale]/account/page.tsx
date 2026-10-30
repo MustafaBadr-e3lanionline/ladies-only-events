@@ -69,10 +69,33 @@ export default function CustomerAccountPage({ params: { locale } }: { params: { 
   const ChevronIcon = isAr ? ChevronLeft : ChevronRight;
 
   // حالة تسجيل الدخول عبر رقم الموبايل + OTP
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [phoneInput, setPhoneInput] = useState("01012345678");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [phoneInput, setPhoneInput] = useState("");
+  const [authError, setAuthError] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+
+  const handleSendOtp = async () => {
+    setAuthError("");
+    try {
+      const response = await fetch("/api/notifications/whatsapp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_otp", phone: phoneInput }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || result?.success !== true) {
+        throw new Error(result?.error || "Phone verification is not configured.");
+      }
+      setOtpSent(true);
+    } catch {
+      setAuthError(isAr ? "تسجيل الدخول غير متاح حاليًا؛ لم يتم إرسال كود تحقق." : "Sign-in is unavailable; no verification code was sent.");
+    }
+  };
+
+  const handleVerifyOtp = () => {
+    setAuthError(isAr ? "التحقق من الكود غير مربوط بخدمة مصادقة آمنة بعد." : "OTP verification is not connected to a secure authentication service yet.");
+  };
 
   // التبويبات والتذكرة المختارة
   const [bookingTab, setBookingTab] = useState<"upcoming" | "past" | "cancelled">("upcoming");
@@ -96,6 +119,8 @@ export default function CustomerAccountPage({ params: { locale } }: { params: { 
             </p>
           </div>
 
+          {authError && <p role="alert" className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900">{authError}</p>}
+
           {!otpSent ? (
             <div className="space-y-4">
               <input
@@ -106,7 +131,7 @@ export default function CustomerAccountPage({ params: { locale } }: { params: { 
                 className="w-full px-4 py-3.5 rounded-xl border border-gray-200 text-center font-mono text-base focus:outline-none focus:border-brand-burgundy"
               />
               <button
-                onClick={() => setOtpSent(true)}
+                onClick={handleSendOtp}
                 className="w-full bg-brand-burgundy text-white font-bold py-3.5 rounded-xl"
               >
                 {isAr ? "إرسال كود التحقق (OTP)" : "Send OTP Code"}
@@ -123,7 +148,7 @@ export default function CustomerAccountPage({ params: { locale } }: { params: { 
                 className="w-full px-4 py-3.5 rounded-xl border border-brand-burgundy text-center font-mono text-xl tracking-widest"
               />
               <button
-                onClick={() => setIsAuthenticated(true)}
+                onClick={handleVerifyOtp}
                 className="w-full bg-brand-burgundy text-white font-bold py-3.5 rounded-xl"
               >
                 {isAr ? "تأكيد الدخول وعرض التذاكر" : "Verify & Login"}
