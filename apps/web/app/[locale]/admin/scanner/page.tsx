@@ -17,31 +17,21 @@ export default function TicketScannerPage({ params: { locale } }: { params: { lo
   const [manualCode, setManualCode] = useState("");
   const [isScanning, setIsScanning] = useState(false);
 
-  // محاكاة مسح التذكرة أو إدخال رقمها يدوياً
+  // Live ticket lookup is not wired yet. Never accept a ticket based on its text alone.
   const handleVerifyTicket = (codeToVerify: string) => {
     setIsScanning(true);
+    setScanResult(null);
     setTimeout(() => {
-      if (codeToVerify.includes("LOE")) {
-        setScanResult({
-          success: true,
-          bookingNumber: codeToVerify,
-          customerName: "Sarah Ahmed",
-          eventTitle: "Ain Sokhna Day Trip",
-          seats: 1,
-          phone: "01012345678",
-        });
-      } else {
-        setScanResult({
-          success: false,
-          bookingNumber: codeToVerify,
-          customerName: "غير معروف",
-          eventTitle: "-",
-          seats: 0,
-          phone: "-",
-        });
-      }
+      setScanResult({
+        success: false,
+        bookingNumber: codeToVerify || "-",
+        customerName: isAr ? "التحقق المباشر غير متصل" : "Live verification is not connected",
+        eventTitle: isAr ? "لم يتم اعتماد الدخول" : "Entry was not approved",
+        seats: 0,
+        phone: "-",
+      });
       setIsScanning(false);
-    }, 600);
+    }, 300);
   };
 
   return (
@@ -58,6 +48,9 @@ export default function TicketScannerPage({ params: { locale } }: { params: { lo
           <p className="text-xs text-gray-500">
             {isAr ? "داليا ورانيا - مسح رمز QR عند نقطة التجمع" : "Dalia & Rania - Gate Check-in"}
           </p>
+          <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-900">
+            {isAr ? "وضع تجريبي فقط: التحقق من قاعدة البيانات غير متصل. لن يتم اعتماد أي تذكرة من هذه الشاشة." : "Demo only: database ticket validation is not connected. This screen will not approve any ticket."}
+          </div>
         </div>
 
         {/* Camera Viewfinder Simulation */}
