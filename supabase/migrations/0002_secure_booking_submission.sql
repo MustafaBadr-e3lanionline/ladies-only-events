@@ -8,10 +8,10 @@ ALTER TABLE public.bookings
 DROP POLICY IF EXISTS "Anyone can create a booking" ON public.bookings;
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('payment-proofs', 'payment-proofs', false, 5242880, ARRAY['image/jpeg','image/png','image/webp'])
+VALUES ('payment-proofs', 'payment-proofs', false, 4194304, ARRAY['image/jpeg','image/png','image/webp'])
 ON CONFLICT (id) DO UPDATE SET
   public = false,
-  file_size_limit = 5242880,
+  file_size_limit = 4194304,
   allowed_mime_types = ARRAY['image/jpeg','image/png','image/webp'];
 
 CREATE OR REPLACE FUNCTION public.create_public_booking(
@@ -109,3 +109,28 @@ $$;
 
 REVOKE ALL ON FUNCTION public.create_public_booking(TEXT,TEXT,TEXT,TEXT,TEXT,TEXT,INTEGER,payment_method_type,TEXT,TEXT,TEXT) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.create_public_booking(TEXT,TEXT,TEXT,TEXT,TEXT,TEXT,INTEGER,payment_method_type,TEXT,TEXT,TEXT) TO service_role;
+
+
+-- Releasing/cancelling a pending booking returns its reserved seats exactly once.
+CREATE OR REPLACE FUNCTION public.restore_experience_seats_on_cancel()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF OLD.status IS DISTINCT FROM 'cancelled'::booking_status
+     AND NEW.status = 'cancelled'::booking_status THEN
+    UPDATE public.experiences
+    SET available_seats = LEAST(total_seats, available_seats + OLD.seats_count)
+    WHERE id = OLD.experience_id;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS restore_seats_after_booking_cancel ON public.bookings;
+CREATE TRIGGER restore_seats_after_booking_cancel
+AFTER UPDATE OF status ON public.bookings
+FOR EACH ROW
+EXECUTE FUNCTION public.restore_experience_seats_on_cancel();
