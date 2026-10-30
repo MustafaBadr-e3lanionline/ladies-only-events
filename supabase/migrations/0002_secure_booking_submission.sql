@@ -48,7 +48,7 @@ BEGIN
   IF length(trim(coalesce(p_attendee_name, ''))) < 2 THEN
     RAISE EXCEPTION 'A valid attendee name is required';
   END IF;
-  IF length(regexp_replace(coalesce(p_attendee_phone, ''), '\D', '', 'g')) NOT BETWEEN 10 AND 13 THEN
+  IF length(regexp_replace(coalesce(p_attendee_phone, ''), '[^0-9]', '', 'g')) NOT BETWEEN 10 AND 13 THEN
     RAISE EXCEPTION 'A valid phone number is required';
   END IF;
   IF p_seats_count IS NULL OR p_seats_count < 1 OR p_seats_count > 6 THEN
@@ -107,5 +107,5 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.create_public_booking(TEXT,TEXT,TEXT,TEXT,TEXT,TEXT,INTEGER,payment_method_type,TEXT,TEXT,TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.create_public_booking(TEXT,TEXT,TEXT,TEXT,TEXT,TEXT,INTEGER,payment_method_type,TEXT,TEXT,TEXT) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.create_public_booking(TEXT,TEXT,TEXT,TEXT,TEXT,TEXT,INTEGER,payment_method_type,TEXT,TEXT,TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.create_public_booking(TEXT,TEXT,TEXT,TEXT,TEXT,TEXT,INTEGER,payment_method_type,TEXT,TEXT,TEXT) TO service_role;
