@@ -21,7 +21,7 @@
 ## Changes started in this branch
 - Added bilingual experience listing, categories and checkout routes.
 - Added a server-side booking submission endpoint that validates input, uploads the receipt to a private Supabase Storage bucket, and calls an atomic database RPC.
-- Added migration `0002_secure_booking_submission.sql` to remove the permissive direct insert policy, add receipt/reference fields, create a private receipt bucket and reserve seats within a transaction.
+- Added migration `0002_secure_booking_submission.sql` to remove the permissive direct insert policy, add receipt/reference fields, create a private receipt bucket, reserve seats within a transaction, and release reserved seats on cancellation.
 - Further security hardening of the payment verification, WhatsApp dispatch, scanner and dashboard should be completed before enabling real production payments.
 
 ## Required environment
