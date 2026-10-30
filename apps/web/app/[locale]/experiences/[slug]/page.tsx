@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
   Star,
   Calendar,
@@ -25,8 +26,8 @@ const TRIP_DATA = {
   reviewsCount: 128,
   tagsEn: ["Day Trip", "Beach", "Relaxation"],
   tagsAr: ["رحلة يوم واحد", "شاطئ", "استجمام"],
-  dateEn: "Sat, 12 Oct 2024",
-  dateAr: "السبت، 12 أكتوبر 2024",
+  dateEn: "Sat, 14 Nov 2026",
+  dateAr: "السبت، 14 نوفمبر 2026",
   timeEn: "06:00 AM - 08:00 PM",
   timeAr: "06:00 صباحاً - 08:00 مساءً",
   meetingPointEn: "New Cairo (Meeting Point)",
@@ -57,6 +58,7 @@ export default function ExperienceDetailsPage({
 }: {
   params: { locale: string; slug: string };
 }) {
+  if (slug !== TRIP_DATA.slug) notFound();
   const isAr = locale === "ar";
   const [activeImage, setActiveImage] = useState(TRIP_DATA.gallery[0]);
   const [seats, setSeats] = useState(1);
