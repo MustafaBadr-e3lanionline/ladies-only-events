@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function jsonError(message: string, status = 400) {
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     if (reference.length < 4 || reference.length > 100) return jsonError("Enter the transfer reference.");
     if (method !== "instapay_bank" && method !== "vodafone_cash") return jsonError("Select a supported transfer method.");
     if (!(receipt instanceof File)) return jsonError("Upload a payment receipt.");
-    if (!ALLOWED_TYPES.has(receipt.type) || receipt.size < 1 || receipt.size > MAX_FILE_SIZE) return jsonError("Receipt must be a JPG, PNG or WebP image up to 5 MB.");
+    if (!ALLOWED_TYPES.has(receipt.type) || receipt.size < 1 || receipt.size > MAX_FILE_SIZE) return jsonError("Receipt must be a JPG, PNG or WebP image up to 4 MB.");
 
     const ext = receipt.type === "image/jpeg" ? "jpg" : receipt.type === "image/png" ? "png" : "webp";
     const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, "");
