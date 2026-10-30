@@ -159,7 +159,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
         <div className="flex items-center gap-3">
           <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold text-gray-700 shadow-sm">
-            Oct 1, 2024 - Oct 31, 2024 ▾
+            {isAr ? "بيانات نموذجية للمعاينة" : "Sample data · preview only"}
           </div>
           <button className="p-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-brand-burgundy">
             <SlidersHorizontal className="w-4 h-4" />
@@ -168,6 +168,12 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             <LayoutGrid className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      <div role="note" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-950">
+        {isAr
+          ? "لوحة تجريبية ببيانات افتراضية لتوضيح شكل الإدارة فقط. لا تمثل الحجوزات أو العميلات أو الإيرادات الحقيقية، ولن تُحفظ التعديلات."
+          : "Demo dashboard with illustrative data only. Bookings, customers and revenue are not real, and changes are not persisted."}
       </div>
 
       {/* Main Grid: Left 8 Cols (KPIs + Charts + Bookings) & Right 4 Cols (Marketing + CRM) */}
