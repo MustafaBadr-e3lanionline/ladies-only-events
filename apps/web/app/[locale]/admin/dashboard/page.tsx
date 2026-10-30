@@ -113,24 +113,26 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const handleApproveBooking = async (booking: BookingRow) => {
     setIsApproving(true);
     try {
-      await fetch("/api/admin/bookings/verify", {
+      const response = await fetch("/api/admin/bookings/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bookingNumber: booking.id,
-          phone: booking.phone,
-          customerName: booking.customer,
-          eventTitle: booking.event,
-          eventDate: booking.date,
-          amount: booking.amount,
-          action: "approve",
-        }),
+        body: JSON.stringify({ bookingNumber: booking.id, action: "approve" }),
       });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || result?.success !== true) {
+        throw new Error(result?.error || "Payment verification is not configured.");
+      }
 
       setBookings((prev) =>
         prev.map((b) => (b.id === booking.id ? { ...b, status: "Confirmed" } : b))
       );
       setSelectedReceiptBooking(null);
+    } catch (error) {
+      window.alert(
+        isAr
+          ? "لم يتم اعتماد التحويل. يلزم تفعيل التحقق الآمن وربط الحجز بقاعدة البيانات أولًا."
+          : "Payment was not approved. Secure verification and database persistence must be configured first."
+      );
     } finally {
       setIsApproving(false);
     }
@@ -157,7 +159,7 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
 
         <div className="flex items-center gap-3">
           <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold text-gray-700 shadow-sm">
-            Oct 1, 2024 - Oct 31, 2024 ▾
+            {isAr ? "بيانات نموذجية للمعاينة" : "Sample data · preview only"}
           </div>
           <button className="p-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-brand-burgundy">
             <SlidersHorizontal className="w-4 h-4" />
@@ -166,6 +168,12 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
             <LayoutGrid className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      <div role="note" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-950">
+        {isAr
+          ? "لوحة تجريبية ببيانات افتراضية لتوضيح شكل الإدارة فقط. لا تمثل الحجوزات أو العميلات أو الإيرادات الحقيقية، ولن تُحفظ التعديلات."
+          : "Demo dashboard with illustrative data only. Bookings, customers and revenue are not real, and changes are not persisted."}
       </div>
 
       {/* Main Grid: Left 8 Cols (KPIs + Charts + Bookings) & Right 4 Cols (Marketing + CRM) */}

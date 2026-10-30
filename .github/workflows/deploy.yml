@@ -3,6 +3,8 @@ name: Deploy Ladies Only Events to Vercel
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -13,10 +15,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./apps/web
 
       - name: Build project

@@ -25,8 +25,8 @@ const TRIP_DATA = {
   reviewsCount: 128,
   tagsEn: ["Day Trip", "Beach", "Relaxation"],
   tagsAr: ["رحلة يوم واحد", "شاطئ", "استجمام"],
-  dateEn: "Sat, 12 Oct 2024",
-  dateAr: "السبت، 12 أكتوبر 2024",
+  dateEn: "Sat, 14 Nov 2026",
+  dateAr: "السبت، 14 نوفمبر 2026",
   timeEn: "06:00 AM - 08:00 PM",
   timeAr: "06:00 صباحاً - 08:00 مساءً",
   meetingPointEn: "New Cairo (Meeting Point)",
@@ -52,13 +52,119 @@ const TRIP_DATA = {
   ],
 };
 
+
+type ExperienceOverride = Partial<typeof TRIP_DATA> & { overviewEn?: string; overviewAr?: string; inclusionsEn?: string[]; inclusionsAr?: string[] };
+
+const EXPERIENCE_OVERRIDES: Record<string, ExperienceOverride> = {
+  "dahab-getaway": {
+    slug: "dahab-getaway",
+    titleEn: "Dahab Getaway",
+    titleAr: "مغامرة دهب",
+    price: 1450,
+    rating: 4.8,
+    reviewsCount: 84,
+    tagsEn: ["Multi-day Trip", "Adventure", "Red Sea"],
+    tagsAr: ["رحلة متعددة الأيام", "مغامرة", "البحر الأحمر"],
+    dateEn: "Wed, 25 Nov 2026",
+    dateAr: "الأربعاء، 25 نوفمبر 2026",
+    timeEn: "06:00 AM - Next day",
+    timeAr: "06:00 صباحًا - اليوم التالي",
+    meetingPointEn: "Cairo (Meeting Point)",
+    meetingPointAr: "القاهرة (نقطة التجمع)",
+    includesSummaryEn: "Transportation, Accommodation, Guided Activities",
+    includesSummaryAr: "الانتقالات، الإقامة، أنشطة بإشراف",
+    availableSeats: 8,
+    totalSeats: 30,
+    overviewEn: "Explore Dahab’s relaxed coastal atmosphere and clear water with a women-only community.",
+    overviewAr: "اكتشفي أجواء دهب الساحرة ومياهها الصافية ضمن مجتمع نسائي مميز.",
+    itinerary: [
+      { time: "06:00 AM", ar: "التجمع والتحرك من القاهرة", en: "Gathering and departure from Cairo" },
+      { time: "Afternoon", ar: "الوصول إلى دهب واستكشاف المنطقة الساحلية", en: "Arrival in Dahab and coastal exploration" },
+      { time: "Next day", ar: "أنشطة جماعية ووقت حر ثم العودة", en: "Group activities, free time and return journey" },
+    ],
+    inclusionsAr: ["انتقالات ذهاب وعودة", "الإقامة حسب البرنامج", "أنشطة جماعية بإشراف"],
+    inclusionsEn: ["Round-trip transportation", "Accommodation as listed", "Guided group activities"],
+  },
+  "alexandria-tour": {
+    slug: "alexandria-tour",
+    titleEn: "Alexandria Cultural Tour",
+    titleAr: "يوم في الإسكندرية",
+    price: 600,
+    rating: 4.8,
+    reviewsCount: 62,
+    tagsEn: ["Cultural Tour", "Sea Views", "Day Trip"],
+    tagsAr: ["جولة ثقافية", "إطلالات بحرية", "رحلة يوم واحد"],
+    dateEn: "Wed, 2 Dec 2026",
+    dateAr: "الأربعاء، 2 ديسمبر 2026",
+    timeEn: "07:00 AM - 09:00 PM",
+    timeAr: "07:00 صباحًا - 09:00 مساءً",
+    meetingPointEn: "Cairo (Meeting Point)",
+    meetingPointAr: "القاهرة (نقطة التجمع)",
+    includesSummaryEn: "Round-trip Transportation, Guided City Tour",
+    includesSummaryAr: "انتقالات ذهاب وعودة، جولة بإرشاد",
+    availableSeats: 15,
+    totalSeats: 35,
+    overviewEn: "Discover Alexandria’s waterfront and cultural highlights on a relaxed guided day trip.",
+    overviewAr: "استمتعي بجولة تجمع بين أجواء البحر وأبرز المعالم الثقافية في الإسكندرية.",
+    itinerary: [
+      { time: "07:00 AM", ar: "التجمع والتحرك من القاهرة", en: "Gathering and departure from Cairo" },
+      { time: "Morning", ar: "جولة على الواجهة البحرية وأبرز المعالم", en: "Waterfront walk and key landmarks" },
+      { time: "Evening", ar: "وقت حر ثم العودة إلى القاهرة", en: "Free time followed by return to Cairo" },
+    ],
+    inclusionsAr: ["انتقالات ذهاب وعودة", "جولة ثقافية بإرشاد", "توقفات مختارة للتصوير"],
+    inclusionsEn: ["Round-trip transportation", "Guided cultural tour", "Selected photo stops"],
+  },
+  "fayoum-oasis-trip": {
+    slug: "fayoum-oasis-trip",
+    titleEn: "Fayoum Oasis Escape",
+    titleAr: "واحة الفيوم",
+    price: 700,
+    rating: 4.9,
+    reviewsCount: 73,
+    tagsEn: ["Nature", "Adventure", "Desert"],
+    tagsAr: ["طبيعة", "مغامرة", "صحراء"],
+    dateEn: "Tue, 8 Dec 2026",
+    dateAr: "الثلاثاء، 8 ديسمبر 2026",
+    timeEn: "07:00 AM - 08:00 PM",
+    timeAr: "07:00 صباحًا - 08:00 مساءً",
+    meetingPointEn: "Cairo (Meeting Point)",
+    meetingPointAr: "القاهرة (نقطة التجمع)",
+    includesSummaryEn: "Transportation, Local Guide, Selected Activities",
+    includesSummaryAr: "الانتقالات، مرشد محلي، أنشطة مختارة",
+    availableSeats: 10,
+    totalSeats: 25,
+    overviewEn: "Discover Fayoum’s desert landscapes and oasis scenery with selected outdoor activities.",
+    overviewAr: "اكتشفي طبيعة الفيوم والمناظر الصحراوية وأجواء الواحات مع أنشطة خارجية مختارة.",
+    itinerary: [
+      { time: "07:00 AM", ar: "التجمع والتحرك من القاهرة", en: "Gathering and departure from Cairo" },
+      { time: "Morning", ar: "استكشاف الطبيعة والمناظر الصحراوية", en: "Exploring natural and desert scenery" },
+      { time: "Afternoon", ar: "أنشطة مختارة ثم العودة إلى القاهرة", en: "Selected activities followed by return to Cairo" },
+    ],
+    inclusionsAr: ["انتقالات ذهاب وعودة", "مرشد محلي حسب البرنامج", "أنشطة مختارة"],
+    inclusionsEn: ["Round-trip transportation", "Local guide as listed", "Selected activities"],
+  },
+};
+
+function getTripData(slug: string) {
+  const selected = EXPERIENCE_OVERRIDES[slug] ?? {};
+  return {
+    ...TRIP_DATA,
+    ...selected,
+    overviewEn: selected.overviewEn ?? "Enjoy a relaxed day trip with a women-only community and a carefully planned group experience.",
+    overviewAr: selected.overviewAr ?? "استمتعي برحلة يومية مريحة ضمن مجتمع نسائي مميز وبرنامج جماعي منظم.",
+    inclusionsEn: selected.inclusionsEn ?? ["Round-trip transportation", "Beach and pool access", "Lunch at the resort", "Group activities", "Trip team supervision"],
+    inclusionsAr: selected.inclusionsAr ?? ["انتقالات ذهاب وعودة", "دخول الشاطئ وحمام السباحة", "وجبة غداء في المنتجع", "أنشطة جماعية", "إشراف فريق الرحلة"],
+  };
+}
+
 export default function ExperienceDetailsPage({
   params: { locale, slug },
 }: {
   params: { locale: string; slug: string };
 }) {
   const isAr = locale === "ar";
-  const [activeImage, setActiveImage] = useState(TRIP_DATA.gallery[0]);
+  const tripData = getTripData(slug);
+  const [activeImage, setActiveImage] = useState(tripData.gallery[0]);
   const [seats, setSeats] = useState(1);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "included" | "photos" | "reviews" | "faq">("overview");
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
@@ -76,8 +182,16 @@ export default function ExperienceDetailsPage({
         </Link>
         <span>›</span>
         <span className="text-brand-burgundy font-bold">
-          {isAr ? TRIP_DATA.titleAr : TRIP_DATA.titleEn}
+          {isAr ? tripData.titleAr : tripData.titleEn}
         </span>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div role="note" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-950">
+          {isAr
+            ? "بيانات هذه الرحلة والأسعار والتقييمات والمقاعد نموذجية لأغراض المعاينة فقط، وليست توافرًا أو حجزًا فعليًا."
+            : "Trip details, prices, ratings and seat counts are sample data for preview only—not live availability or a real booking."}
+        </div>
       </div>
 
       {/* Main Content Grid */}
@@ -87,24 +201,24 @@ export default function ExperienceDetailsPage({
           {/* Header Titles */}
           <div>
             <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900">
-              {TRIP_DATA.titleEn}
+              {tripData.titleEn}
             </h1>
             <p className="text-lg sm:text-xl font-bold text-brand-burgundy mt-1">
-              {TRIP_DATA.titleAr}
+              {tripData.titleAr}
             </p>
 
             {/* Rating & Tags */}
             <div className="flex flex-wrap items-center gap-3 mt-3">
               <div className="flex items-center gap-1 text-amber-500 text-sm font-bold">
                 <Star className="w-4 h-4 fill-current" />
-                <span>{TRIP_DATA.rating}</span>
+                <span>{tripData.rating}</span>
                 <span className="text-gray-400 font-normal text-xs">
-                  ({TRIP_DATA.reviewsCount} {isAr ? "تقييم" : "reviews"})
+                  ({tripData.reviewsCount} {isAr ? "تقييم" : "reviews"})
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
-                {(isAr ? TRIP_DATA.tagsAr : TRIP_DATA.tagsEn).map((tag) => (
+                {(isAr ? tripData.tagsAr : tripData.tagsEn).map((tag) => (
                   <span
                     key={tag}
                     className="px-3 py-1 rounded-full bg-brand-softPink text-brand-burgundy text-xs font-bold"
@@ -121,12 +235,12 @@ export default function ExperienceDetailsPage({
             <div className="relative h-[360px] sm:h-[440px] rounded-3xl overflow-hidden shadow-card">
               <img
                 src={activeImage}
-                alt={TRIP_DATA.titleEn}
+                alt={tripData.titleEn}
                 className="w-full h-full object-cover transition duration-500"
               />
               {/* Thumbnails Overlay inside Image (as per UI mockup) */}
               <div className="absolute bottom-4 inset-x-4 flex items-center gap-2.5 overflow-x-auto bg-black/35 backdrop-blur-md p-2.5 rounded-2xl">
-                {TRIP_DATA.gallery.map((img, idx) => (
+                {tripData.gallery.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImage(img)}
@@ -173,16 +287,14 @@ export default function ExperienceDetailsPage({
                   {isAr ? "تفاصيل التجربة مع داليا ورانيا" : "Experience Overview"}
                 </h3>
                 <p>
-                  {isAr
-                    ? "استمتعي بيوم كامل من الخصوصية والبهجة على أجمل شواطئ العين السخنة برفقة مجتمع نسائي راقٍ. الرحلة مصممة لتفصلي عن ضغوط الأسبوع، وتكوني صداقات جديدة في أجواء آمنة ومبهجة تحت إشراف داليا ورانيا."
-                    : "Enjoy a full day of privacy, relaxation, and fun on the finest beaches of Ain Sokhna with an amazing community of women."}
+                  {isAr ? tripData.overviewAr : tripData.overviewEn}
                 </p>
               </div>
             )}
 
             {activeTab === "itinerary" && (
               <div className="space-y-4">
-                {TRIP_DATA.itinerary.map((item, idx) => (
+                {tripData.itinerary.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-4 p-3 rounded-2xl bg-brand-softPink/40">
                     <span className="px-3 py-1 rounded-lg bg-brand-burgundy text-white text-xs font-bold shrink-0">
                       {item.time}
@@ -195,13 +307,7 @@ export default function ExperienceDetailsPage({
 
             {activeTab === "included" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  isAr ? "الانتقالات بباصات حديثة مكيفة ذهاب وعودة" : "Round-trip A/C Bus Transportation",
-                  isAr ? "دخول الشاطئ وحمام السباحة الخاص" : "Beach & Pool Access",
-                  isAr ? "وجبة غداء متكاملة في المنتجع" : "Full Lunch Meal at the Resort",
-                  isAr ? "تصوير فوتوغرافي احترافي طوال اليوم" : "Professional Photography All Day",
-                  isAr ? "إشراف كامل من فريق داليا ورانيا" : "Full Supervision by Dalia & Rania",
-                ].map((inc, i) => (
+                {(isAr ? tripData.inclusionsAr : tripData.inclusionsEn).map((inc, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-sm font-medium text-gray-800">
                     <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>{inc}</span>
@@ -217,7 +323,7 @@ export default function ExperienceDetailsPage({
           <div className="sticky top-28 bg-white rounded-3xl p-6 shadow-card border border-brand-peach/40 space-y-6">
             <div>
               <div className="text-3xl font-extrabold text-brand-burgundy">
-                EGP {TRIP_DATA.price}
+                EGP {tripData.price}
               </div>
               <span className="text-xs text-gray-400 font-medium">
                 {isAr ? "للفرد الواحد" : "Per Person"}
@@ -227,26 +333,26 @@ export default function ExperienceDetailsPage({
             <div className="space-y-3.5 text-sm text-gray-700 border-t border-b border-gray-100 py-4">
               <div className="flex items-center gap-3">
                 <Calendar className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.dateAr : TRIP_DATA.dateEn}</span>
+                <span>{isAr ? tripData.dateAr : tripData.dateEn}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.timeAr : TRIP_DATA.timeEn}</span>
+                <span>{isAr ? tripData.timeAr : tripData.timeEn}</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.meetingPointAr : TRIP_DATA.meetingPointEn}</span>
+                <span>{isAr ? tripData.meetingPointAr : tripData.meetingPointEn}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Bus className="w-4 h-4 text-brand-rose shrink-0" />
-                <span>{isAr ? TRIP_DATA.includesSummaryAr : TRIP_DATA.includesSummaryEn}</span>
+                <span>{isAr ? tripData.includesSummaryAr : tripData.includesSummaryEn}</span>
               </div>
               <div className="flex items-center gap-3 font-bold text-brand-burgundy">
                 <Users className="w-4 h-4 text-brand-rose shrink-0" />
                 <span>
                   {isAr
-                    ? `المقاعد المتاحة: ${TRIP_DATA.availableSeats} / ${TRIP_DATA.totalSeats}`
-                    : `Available Seats: ${TRIP_DATA.availableSeats} / ${TRIP_DATA.totalSeats}`}
+                    ? `المقاعد المتاحة: ${tripData.availableSeats} / ${tripData.totalSeats}`
+                    : `Available Seats: ${tripData.availableSeats} / ${tripData.totalSeats}`}
                 </span>
               </div>
             </div>
@@ -264,7 +370,7 @@ export default function ExperienceDetailsPage({
                 <span className="font-bold text-lg">{seats}</span>
                 <button
                   type="button"
-                  onClick={() => setSeats(Math.min(TRIP_DATA.availableSeats, seats + 1))}
+                  onClick={() => setSeats(Math.min(tripData.availableSeats, seats + 1))}
                   className="w-8 h-8 rounded-lg bg-brand-softPink text-brand-burgundy font-bold text-lg"
                 >
                   +
@@ -277,7 +383,7 @@ export default function ExperienceDetailsPage({
             </div>
 
             <Link
-              href={`/${locale}/checkout?trip=${TRIP_DATA.slug}&seats=${seats}`}
+              href={`/${locale}/checkout?trip=${tripData.slug}&seats=${seats}`}
               className="w-full bg-brand-burgundy hover:bg-brand-burgundyDark text-white font-bold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition"
             >
               <span>{isAr ? "احجزي الآن" : "Book Now"}</span>
