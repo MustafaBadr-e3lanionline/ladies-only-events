@@ -64,7 +64,8 @@ const MY_BOOKINGS = [
   },
 ];
 
-export default function CustomerAccountPage({ params: { locale } }: { params: { locale: string } }) {
+export default function CustomerAccountPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params);
   const isAr = locale === "ar";
   const ChevronIcon = isAr ? ChevronLeft : ChevronRight;
 
