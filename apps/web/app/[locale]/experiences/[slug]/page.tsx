@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import Link from "next/link";
 import {
   Star,
@@ -52,11 +52,8 @@ const TRIP_DATA = {
   ],
 };
 
-export default function ExperienceDetailsPage({
-  params: { locale, slug },
-}: {
-  params: { locale: string; slug: string };
-}) {
+export default function ExperienceDetailsPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = use(params);
   const isAr = locale === "ar";
   if (slug !== TRIP_DATA.slug) return <main className="min-h-screen bg-brand-ivory px-4 py-24 text-center"><h1 className="text-3xl font-bold text-brand-burgundy">{isAr ? "تفاصيل هذه التجربة غير متاحة بعد" : "Experience details are not available yet"}</h1><p className="mx-auto mt-4 max-w-xl text-gray-600">{isAr ? "يمكنك استعراض الرحلات المتاحة واختيار الحجز من القائمة." : "Browse available experiences and continue to booking from the listing."}</p><Link href={`/${locale}/experiences`} className="mt-7 inline-block rounded-full bg-brand-burgundy px-6 py-3 font-bold text-white">{isAr ? "عرض الرحلات" : "Browse experiences"}</Link></main>;
   const [activeImage, setActiveImage] = useState(TRIP_DATA.gallery[0]);
