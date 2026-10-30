@@ -5,6 +5,8 @@
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 253, 251, 247;
+  --font-playfair: Georgia, "Times New Roman", serif;
+  --font-cairo: Arial, "Noto Sans Arabic", sans-serif;
 }
 
 body {
