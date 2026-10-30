@@ -2,9 +2,11 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import BookingWizard from "../../../features/booking/BookingWizard";
 
-export default function CheckoutPage({ params: { locale }, searchParams }: { params: { locale: string }; searchParams?: { trip?: string } }) {
+export default async function CheckoutPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams?: Promise<{ trip?: string }> }) {
+  const { locale } = await params;
+  const query = searchParams ? await searchParams : {};
   const isAr = locale === "ar";
-  const tripSlug = searchParams?.trip || "ain-sokhna-day-trip";
+  const tripSlug = query.trip || "ain-sokhna-day-trip";
   return <main className="min-h-screen bg-brand-ivory">
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-12">
       <Link href={`/${locale}/experiences`} className="inline-flex items-center gap-2 text-sm font-bold text-brand-burgundy hover:text-brand-rose">{isAr ? <ArrowRight size={16}/> : <ArrowLeft size={16}/>} {isAr ? "العودة إلى الرحلات" : "Back to experiences"}</Link>
