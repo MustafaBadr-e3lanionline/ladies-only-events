@@ -16,32 +16,20 @@ export default function TicketScannerPage({ params: { locale } }: { params: { lo
 
   const [manualCode, setManualCode] = useState("");
   const [isScanning, setIsScanning] = useState(false);
+  const [verificationUnavailable, setVerificationUnavailable] = useState(false);
 
-  // محاكاة مسح التذكرة أو إدخال رقمها يدوياً
+  // Fail closed: a code shape alone is not proof of a valid, paid, unused ticket.
   const handleVerifyTicket = (codeToVerify: string) => {
-    setIsScanning(true);
-    setTimeout(() => {
-      if (codeToVerify.includes("LOE")) {
-        setScanResult({
-          success: true,
-          bookingNumber: codeToVerify,
-          customerName: "Sarah Ahmed",
-          eventTitle: "Ain Sokhna Day Trip",
-          seats: 1,
-          phone: "01012345678",
-        });
-      } else {
-        setScanResult({
-          success: false,
-          bookingNumber: codeToVerify,
-          customerName: "غير معروف",
-          eventTitle: "-",
-          seats: 0,
-          phone: "-",
-        });
-      }
-      setIsScanning(false);
-    }, 600);
+    setVerificationUnavailable(true);
+    setIsScanning(false);
+    setScanResult({
+      success: false,
+      bookingNumber: codeToVerify.trim(),
+      customerName: "-",
+      eventTitle: "-",
+      seats: 0,
+      phone: "-",
+    });
   };
 
   return (
@@ -101,7 +89,7 @@ export default function TicketScannerPage({ params: { locale } }: { params: { lo
               {scanResult.success ? (
                 <CheckCircle2 className="w-8 h-8 text-emerald-600 shrink-0" />
               ) : (
-                <XCircle className="w-8 h-8 text-rose-600 shrink-0" />
+                <XCircle className="w-8 h-8 text-amber-600 shrink-0" />
               )}
               <div>
                 <h3 className="font-bold text-sm text-gray-900">
@@ -109,9 +97,13 @@ export default function TicketScannerPage({ params: { locale } }: { params: { lo
                     ? isAr
                       ? "تذكرة سارية ومعتمدة ✓"
                       : "Valid & Confirmed Ticket"
+                    : verificationUnavailable
+                    ? isAr
+                      ? "التحقق غير متاح: يلزم ربط قاعدة بيانات الحجوزات."
+                      : "Verification unavailable: connect the booking database first."
                     : isAr
-                    ? "تذكرة غير صالحة!"
-                    : "Invalid Ticket!"}
+                      ? "تذكرة غير صالحة!"
+                      : "Invalid Ticket!"}
                 </h3>
                 <span className="text-xs font-mono text-gray-500">{scanResult.bookingNumber}</span>
               </div>
