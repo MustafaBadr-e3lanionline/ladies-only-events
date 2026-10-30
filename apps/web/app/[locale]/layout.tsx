@@ -1,6 +1,6 @@
 import { Playfair_Display, Cairo } from "next/font/google";
 import { notFound } from "next/navigation";
-import "../globals.css";
+import "./globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
