@@ -1,42 +1,42 @@
 {
   "nav": {
-    "home": "الرئيسية",
-    "experiences": "الرحلات",
-    "calendar": "التقويم",
-    "about": "عن المجتمع",
-    "gallery": "معرض الصور",
-    "contact": "تواصلي معنا",
-    "bookNow": "احجزي الآن"
+    "home": "Home",
+    "experiences": "Experiences",
+    "calendar": "Calendar",
+    "about": "Our Community",
+    "gallery": "Gallery",
+    "contact": "Contact Us",
+    "bookNow": "Book Now"
   },
   "hero": {
-    "title": "أكثر من رحلات.. مجتمع نسائي مميز",
-    "subtitle": "اكتشفي • استمتعي • كوني صداقات جديدة",
-    "ctaPrimary": "استكشفي الرحلات القادمة",
-    "ctaSecondary": "شاهدي قصتنا"
+    "title": "More Than Trips — A Community of Amazing Women",
+    "subtitle": "Explore • Enjoy • Make New Friends",
+    "ctaPrimary": "Explore Upcoming Experiences",
+    "ctaSecondary": "Watch Our Story"
   },
   "sections": {
-    "categories": "التصنيفات",
-    "upcomingEvents": "الرحلات القادمة",
-    "viewAll": "عرض الكل",
-    "perPerson": "للفرد",
-    "availableSeats": "المقاعد المتاحة"
+    "categories": "Explore by Category",
+    "upcomingEvents": "Upcoming Experiences",
+    "viewAll": "View All",
+    "perPerson": "per person",
+    "availableSeats": "Seats available"
   },
   "checkout": {
-    "step1": "بيانات الحجز",
-    "step2": "طريقة الدفع",
-    "step3": "إتمام الدفع",
-    "step4": "تأكيد الحجز",
-    "attendeeInfo": "بيانات المشتركة",
-    "fullName": "الاسم بالكامل *",
-    "phone": "رقم الموبايل (واتساب) *",
-    "email": "البريد الإلكتروني (اختياري)",
-    "specialRequests": "أي طلبات خاصة؟ (اختياري)",
-    "continue": "متابعة",
-    "back": "رجوع",
-    "payNow": "ادفعي الآن",
-    "confirmedTitle": "تم تأكيد الحجز بنجاح!",
-    "confirmedDesc": "تم إرسال تفاصيل الحجز والتذكرة إلى بريدك الإلكتروني والواتساب",
-    "downloadTicket": "تحميل التذكرة",
-    "viewBookings": "عرض حجوزاتي"
+    "step1": "Booking Details",
+    "step2": "Payment Method",
+    "step3": "Payment Proof",
+    "step4": "Booking Confirmation",
+    "attendeeInfo": "Attendee Information",
+    "fullName": "Full Name *",
+    "phone": "Mobile / WhatsApp Number *",
+    "email": "Email Address (optional)",
+    "specialRequests": "Special Requests (optional)",
+    "continue": "Continue",
+    "back": "Back",
+    "payNow": "Pay Now",
+    "confirmedTitle": "Booking request received",
+    "confirmedDesc": "Your booking is not confirmed until payment has been verified. We will send your confirmation after review.",
+    "downloadTicket": "Download Ticket",
+    "viewBookings": "View My Bookings"
   }
 }
