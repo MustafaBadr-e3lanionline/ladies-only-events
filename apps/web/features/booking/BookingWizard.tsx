@@ -330,7 +330,7 @@ export default function BookingWizard({ locale = "ar", tripSlug = "ain-sokhna-da
                 </span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                   onChange={(e) =>
                     setForm({ ...form, receiptFile: e.target.files?.[0] || null })
@@ -412,6 +412,7 @@ export default function BookingWizard({ locale = "ar", tripSlug = "ain-sokhna-da
             <div className="text-start">
               <span className="text-xs text-gray-500 block">{isAr ? "رقم الحجز" : "Booking Number"}</span>
               <span className="font-mono font-extrabold text-brand-burgundy text-base">{bookingNumber}</span>
+              <span className="mt-1 block text-xs font-bold text-gray-600">{isAr ? `الإجمالي المسجل: ${confirmedTotal ?? total} جنيه` : `Recorded total: EGP ${confirmedTotal ?? total}`}</span>
             </div>
             <button
               onClick={() => navigator.clipboard.writeText(bookingNumber)}
