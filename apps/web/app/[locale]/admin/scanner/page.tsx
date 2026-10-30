@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { QrCode, CheckCircle2, XCircle, UserCheck, RefreshCw } from "lucide-react";
 
 export default function TicketScannerPage({ params: { locale } }: { params: { locale: string } }) {
