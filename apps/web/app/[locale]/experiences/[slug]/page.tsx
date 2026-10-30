@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   Star,
   Calendar,
@@ -58,8 +57,8 @@ export default function ExperienceDetailsPage({
 }: {
   params: { locale: string; slug: string };
 }) {
-  if (slug !== TRIP_DATA.slug) notFound();
   const isAr = locale === "ar";
+  if (slug !== TRIP_DATA.slug) return <main className="min-h-screen bg-brand-ivory px-4 py-24 text-center"><h1 className="text-3xl font-bold text-brand-burgundy">{isAr ? "تفاصيل هذه التجربة غير متاحة بعد" : "Experience details are not available yet"}</h1><p className="mx-auto mt-4 max-w-xl text-gray-600">{isAr ? "يمكنك استعراض الرحلات المتاحة واختيار الحجز من القائمة." : "Browse available experiences and continue to booking from the listing."}</p><Link href={`/${locale}/experiences`} className="mt-7 inline-block rounded-full bg-brand-burgundy px-6 py-3 font-bold text-white">{isAr ? "عرض الرحلات" : "Browse experiences"}</Link></main>;
   const [activeImage, setActiveImage] = useState(TRIP_DATA.gallery[0]);
   const [seats, setSeats] = useState(1);
   const [activeTab, setActiveTab] = useState<"overview" | "itinerary" | "included" | "photos" | "reviews" | "faq">("overview");
