@@ -30,10 +30,12 @@ export default function LocaleLayout({
   const isRtl = locale === "ar";
 
   return (
-    <html lang={locale} dir={isRtl ? "rtl" : "ltr"} className={`${playfair.variable} ${cairo.variable}`}>
-      <body className="bg-brand-ivory text-gray-800 font-sans antialiased selection:bg-brand-rose selection:text-white">
-        {children}
-      </body>
-    </html>
+    <div
+      lang={locale}
+      dir={isRtl ? "rtl" : "ltr"}
+      className={`${playfair.variable} ${cairo.variable} bg-brand-ivory text-gray-800 font-sans antialiased selection:bg-brand-rose selection:text-white`}
+    >
+      {children}
+    </div>
   );
 }
