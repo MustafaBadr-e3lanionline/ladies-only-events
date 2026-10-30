@@ -113,24 +113,26 @@ export default function AdminDashboardPage({ params: { locale } }: { params: { l
   const handleApproveBooking = async (booking: BookingRow) => {
     setIsApproving(true);
     try {
-      await fetch("/api/admin/bookings/verify", {
+      const response = await fetch("/api/admin/bookings/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bookingNumber: booking.id,
-          phone: booking.phone,
-          customerName: booking.customer,
-          eventTitle: booking.event,
-          eventDate: booking.date,
-          amount: booking.amount,
-          action: "approve",
-        }),
+        body: JSON.stringify({ bookingNumber: booking.id, action: "approve" }),
       });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || result?.success !== true) {
+        throw new Error(result?.error || "Payment verification is not configured.");
+      }
 
       setBookings((prev) =>
         prev.map((b) => (b.id === booking.id ? { ...b, status: "Confirmed" } : b))
       );
       setSelectedReceiptBooking(null);
+    } catch (error) {
+      window.alert(
+        isAr
+          ? "لم يتم اعتماد التحويل. يلزم تفعيل التحقق الآمن وربط الحجز بقاعدة البيانات أولًا."
+          : "Payment was not approved. Secure verification and database persistence must be configured first."
+      );
     } finally {
       setIsApproving(false);
     }
