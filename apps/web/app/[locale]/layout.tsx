@@ -1,17 +1,4 @@
-import { Playfair_Display, Cairo } from "next/font/google";
 import { notFound } from "next/navigation";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  weight: ["600", "700"],
-});
-
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  variable: "--font-cairo",
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata = {
   title: "Ladies Only Events | With Dalia and Rania",
@@ -32,7 +19,7 @@ export default function LocaleLayout({
     <div
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`${playfair.variable} ${cairo.variable} bg-brand-ivory text-gray-800 font-sans antialiased selection:bg-brand-rose selection:text-white`}
+      className="bg-brand-ivory text-gray-800 font-sans antialiased selection:bg-brand-rose selection:text-white"
     >
       {children}
     </div>
