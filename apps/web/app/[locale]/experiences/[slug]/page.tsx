@@ -186,6 +186,14 @@ export default function ExperienceDetailsPage({
         </span>
       </div>
 
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div role="note" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-6 text-amber-950">
+          {isAr
+            ? "بيانات هذه الرحلة والأسعار والتقييمات والمقاعد نموذجية لأغراض المعاينة فقط، وليست توافرًا أو حجزًا فعليًا."
+            : "Trip details, prices, ratings and seat counts are sample data for preview only—not live availability or a real booking."}
+        </div>
+      </div>
+
       {/* Main Content Grid */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 mt-2">
         {/* Left / Right Column: Gallery & Details (8 Cols) */}
