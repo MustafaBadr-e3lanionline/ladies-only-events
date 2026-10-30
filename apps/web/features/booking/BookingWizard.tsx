@@ -13,8 +13,16 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
+const BOOKING_TRIPS = {
+  "ain-sokhna-day-trip": { titleEn: "Ain Sokhna Day Trip", titleAr: "رحلة العين السخنة", dateEn: "Sat, 14 Nov 2026", dateAr: "السبت، 14 نوفمبر 2026", price: 750, image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=300&q=80" },
+  "dahab-getaway": { titleEn: "Dahab Getaway", titleAr: "مغامرة دهب", dateEn: "Wed, 25 Nov 2026", dateAr: "الأربعاء، 25 نوفمبر 2026", price: 1450, image: "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=300&q=80" },
+  "alexandria-tour": { titleEn: "Alexandria Cultural Tour", titleAr: "يوم في الإسكندرية", dateEn: "Wed, 2 Dec 2026", dateAr: "الأربعاء، 2 ديسمبر 2026", price: 600, image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=300&q=80" },
+  "fayoum-oasis-trip": { titleEn: "Fayoum Oasis Escape", titleAr: "واحة الفيوم", dateEn: "Tue, 8 Dec 2026", dateAr: "الثلاثاء، 8 ديسمبر 2026", price: 700, image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80" },
+};
+
+export default function BookingWizard({ locale = "ar", tripSlug = "ain-sokhna-day-trip" }: { locale?: string; tripSlug?: string }) {
   const isAr = locale === "ar";
+  const trip = BOOKING_TRIPS[tripSlug as keyof typeof BOOKING_TRIPS] ?? BOOKING_TRIPS["ain-sokhna-day-trip"];
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [seats, setSeats] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<"instapay_bank" | "vodafone_cash">("instapay_bank");
@@ -30,11 +38,11 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
     receiptFileName: "",
   });
 
-  const pricePerPerson = 750;
+  const pricePerPerson = trip.price;
   const serviceFee = 15;
   const subtotal = seats * pricePerPerson;
   const total = subtotal + serviceFee;
-  const [bookingNumber, setBookingNumber] = useState("LOE-20241012-0015");
+  const bookingNumber = "";
 
   const handleConfirmManualPayment = async () => {
     setSubmissionError("");
@@ -84,13 +92,13 @@ export default function BookingWizard({ locale = "ar" }: { locale?: string }) {
         <div className="space-y-5">
           <div className="flex items-center gap-4 bg-brand-softPink/60 p-3.5 rounded-2xl">
             <img
-              src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=300&q=80"
-              alt="Ain Sokhna"
+              src={trip.image}
+              alt={isAr ? trip.titleAr : trip.titleEn}
               className="w-20 h-20 rounded-xl object-cover"
             />
             <div>
-              <h3 className="font-bold text-gray-900">Ain Sokhna Day Trip</h3>
-              <p className="text-xs text-gray-500 mt-0.5">Sat, 12 Oct 2024 • 06:00 AM</p>
+              <h3 className="font-bold text-gray-900">{isAr ? trip.titleAr : trip.titleEn}</h3>
+              <p className="text-xs text-gray-500 mt-0.5">{isAr ? trip.dateAr : trip.dateEn} • 06:00 AM</p>
               <p className="text-sm font-extrabold text-brand-burgundy mt-1">EGP {pricePerPerson}</p>
             </div>
           </div>
