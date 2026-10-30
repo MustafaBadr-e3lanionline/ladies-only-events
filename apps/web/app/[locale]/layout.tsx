@@ -5,13 +5,14 @@ export const metadata = {
   description: "أكثر من رحلات.. مجتمع نسائي مميز للرحلات والفعاليات",
 };
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   if (!["ar", "en"].includes(locale)) notFound();
   const isRtl = locale === "ar";
 
